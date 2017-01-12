@@ -1,12 +1,12 @@
 var colors = require('colors')
-const util = require('util')
+var util = require('util')
 var extend = util._extend;
 var express = require('express')
 var clone = require('clone');
 var async = require('async');
 var bodyParser = require("body-parser");
 var https = require('https');
-const EventEmitter = require('events')
+var EventEmitter = require('events').EventEmitter;
 var callbackListener = 'webhooklistener'
 
 var SparkBot = function(token, port, botdomain) {
@@ -102,6 +102,11 @@ var SparkBot = function(token, port, botdomain) {
             callback(that.botname)
         }
     }
+
+    this.getPort = function()
+    {
+        return port;
+    }
 }
 
 util.inherits(SparkBot, EventEmitter)
@@ -163,7 +168,7 @@ SparkBot.prototype.registerWebHooks = function() {
     });
     var messageData = {
         'name': 'GlobalListener',
-        'targetUrl': 'http://' + this.getBotDomain() + '/' + callbackListener,
+        'targetUrl': 'http://' + this.getBotDomain() +( isNaN(this.getPort()) ? '' : this.getPort() ) +'/' + callbackListener,
         'resource': 'messages',
         'event': 'all'
     }
