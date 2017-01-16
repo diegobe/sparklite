@@ -1,6 +1,9 @@
 ## Synopsis
 The purpose of this NPM is to provide a light weight API layer for rapid prototyping of Cisco Spark bots.
 
+## Motivation
+This projects abstracts and reduces the communication with Cisco Spark services into consuming simple JS API that we, developers, understand better. Ultimately what a developer wants to focus is in the business logic, which is the fun part.
+
 ## Code Example
 
 ```javascript
@@ -24,5 +27,8 @@ sparkBot.on('message', function (event)
 
 ```
 
-## Motivation
-This projects abstracts and reduces the communication with Cisco Spark services into consuming simple JS API that we, developers, understand better. Ultimately what a developer wants to focus is in the business logic, which is the fun part.
+## Tests
+
+The tests are implemented with mocha,  to execute them run the following command:
+
+> npm test

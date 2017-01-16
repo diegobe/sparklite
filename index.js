@@ -11,8 +11,6 @@ var callbackListener = 'webhooklistener'
 
 var SparkBot = function(token, port, botdomain) {
     EventEmitter.call(this)
-    const that = this;
-
     console.log('Constructing SparkBot '.red);
     this.app = express();
     this.token = token;
@@ -39,49 +37,49 @@ var SparkBot = function(token, port, botdomain) {
     })
 
     this.app.post('/' + callbackListener, function(req, res) {
-        console.log('Webhooks API called" ' + JSON.stringify(req.body));
+        console.log(('Webhooks API called" ' + JSON.stringify(req.body)).red);
 
         if (req.body && req.body.resource == 'messages') {
             var message = req.body.data;
 
-            that.getBotName(function(botname) {
+            this.getBotName(function(botname) {
                 console.log('received botname: ' + botname);
 
                 if (message.personEmail != botname) {
-                    that.readMessage(message, function(result) {
+                    this.readMessage(message, function(result) {
                         var txt = result.text;
                         var personId = message.personId;
 
-                        that.readPersonDetails(personId, function(personDetails) {
+                        this.readPersonDetails(personId, function(personDetails) {
                             message['message'] = txt;
                             message['person'] = personDetails;
-                            that.emit('message', message);
-                        });
-                    })
+                            this.emit('message', message);
+                        }.bind(this));
+                    }.bind(this))
                 }
-            })
+            }.bind(this))
         } else if (req.body && req.body.resource == 'rooms') {
             var message = req.body.data;
-            that.emit('rooms', message);
+            this.emit('rooms', message);
         } else if (req.body && req.body.resource == 'memberships') {
             var message = req.body.data;
-            that.emit('memberships', message);
+            this.emit('memberships', message);
         } else {
             var message = req.body.data;
-            that.emit('others', message);
+            this.emit('others', message);
         }
 
-        res.send('webhooks')
-    })
+        res.send('')
+    }.bind(this))
 
-    this.app.listen(port, function() {
-        console.log('Bot started at port: ' + port)
+    var server = this.app.listen(port, function() {
+        console.log(('Bot started at port: ' + port).red)
     })
 
     this.app.get('/init', function(req, res) {
-        that.initializeWeebHooks();
+        this.initializeWeebHooks();
         res.send('warren started')
-    })
+    }.bind(this))
 
     this.getOptions = function() {
         return this.options;
@@ -92,14 +90,14 @@ var SparkBot = function(token, port, botdomain) {
     }
 
     this.getBotName = function(callback) {
-        if (that.botname == undefined || that.botname == null) {
-            that.getMyDetails(function(result) {
-                that.botname = result['emails'][0];
-                console.log('Botname found: ' + that.botname);
-                callback(that.botname)
+        if (this.botname == undefined || this.botname == null) {
+            this.getMyDetails(function(result) {
+                this.botname = result['emails'][0];
+                console.log('Botname found: ' + this.botname);
+                callback(this.botname)
             });
         } else {
-            callback(that.botname)
+            callback(this.botname)
         }
     }
 
@@ -110,6 +108,11 @@ var SparkBot = function(token, port, botdomain) {
 }
 
 util.inherits(SparkBot, EventEmitter)
+
+SparkBot.prototype.getServer= function() {
+    return this.app;
+};
+
 
 SparkBot.prototype.init = function() {
     console.log('Init From SparkBot'.red);
@@ -137,12 +140,12 @@ SparkBot.prototype.deleteAllWebHooks = function(doneCallback) {
 }
 
 SparkBot.prototype.deleteWebHooks = function(webHooks, doneCallback) {
-    var that = this;
+
     var queue = async.queue(function(webhook, callback) {
-        that.deleteWebHook(webhook, function() {
+        this.deleteWebHook(webhook, function() {
             callback();
         });
-    }, 5);
+    }.bind(this), 5);
 
     queue.drain = function() {
         doneCallback()

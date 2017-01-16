@@ -1,10 +1,10 @@
 {
   "name": "sparklite",
-  "version": "1.0.46",
+  "version": "1.0.50",
   "description": "A lite node API to access Cisco Spark resources",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test"
   },
   "repository": {
     "type": "git",
@@ -30,5 +30,9 @@
     "body-parser": "1.15.1",
     "clone": "2.1.0",
     "async": "2.1.4"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "supertest": "^2.0.1"
   }
 }
