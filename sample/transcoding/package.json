@@ -1,0 +1,9 @@
+{
+  "name": "Transcoding",
+  "version": "0.0.1",
+  "dependencies": {
+    "sparklite":"1.0.52",
+    "webshot":"*",
+    "guid":"0.0.12"
+  }
+}

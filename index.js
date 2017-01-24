@@ -78,7 +78,7 @@ var SparkBot = function(token, port, botdomain) {
 
     this.app.get('/init', function(req, res) {
         this.initializeWeebHooks();
-        res.send('warren started')
+        res.send('bot re-initialized')
     }.bind(this))
 
     this.getOptions = function() {
@@ -205,6 +205,23 @@ SparkBot.prototype.sendMessage = function(roomId, txt, callback) {
         'text': txt
     }
 
+    SparkBot.sendRequestWithData(messageData, extendedOptions, function(result) {
+        callback(result);
+    })
+}
+
+SparkBot.prototype.sendMessageWithFile = function(roomId, txt, filesUrl, callback) {
+    var optionsCloned = clone(this.getOptions());
+    var extendedOptions = extend(optionsCloned, {
+        path: "/v1/messages/"
+    });
+    extendedOptions['method'] = 'POST';
+    var messageData = {
+        'roomId': roomId,
+        'text': txt,
+        'files': filesUrl
+    }
+    
     SparkBot.sendRequestWithData(messageData, extendedOptions, function(result) {
         callback(result);
     })

@@ -1,6 +1,6 @@
 {
   "name": "sparklite",
-  "version": "1.0.50",
+  "version": "1.0.52",
   "description": "A lite node API to access Cisco Spark resources",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,12 @@
     "lite",
     "spark",
     "developers",
-    "node.js"
+    "node.js",
+    "bots",
+    "node",
+    "quick",
+    "fast",
+    "prototyping"
   ],
   "author": "Diego Becerra",
   "license": "ISC",
