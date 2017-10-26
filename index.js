@@ -9,12 +9,13 @@ var https = require('https');
 var EventEmitter = require('events').EventEmitter;
 var callbackListener = 'webhooklistener'
 
-var SparkBot = function(token, port, botdomain) {
+var SparkBot = function(token, port, botdomain, portInWebook) {
     EventEmitter.call(this)
     console.log('Constructing SparkBot '.red);
     this.app = express();
     this.token = token;
     this.port = port;
+    this.portInWebook = portInWebook;
     this.botdomain = botdomain;
     this.botname = null;
     this.options = {
@@ -89,6 +90,10 @@ var SparkBot = function(token, port, botdomain) {
         return this.botdomain;
     }
 
+    this.hasPortInwebHook = function() {
+        return this.portInWebook;
+    }
+
     this.getBotName = function(callback) {
         if (this.botname == undefined || this.botname == null) {
             this.getMyDetails(function(result) {
@@ -133,9 +138,15 @@ SparkBot.prototype.deleteAllWebHooks = function(doneCallback) {
     var regWebHooks;
     this.readRegisteredWebHooks(function(result) {
         regWebHooks = result;
-        this.deleteWebHooks(regWebHooks.items, function() {
+        if(JSON.stringify(regWebHooks) === '{}')
+        {
             doneCallback();
-        })
+        }else
+        {
+          this.deleteWebHooks(regWebHooks.items, function() {
+              doneCallback();
+          })
+        }
     }.bind(this));
 }
 
@@ -169,9 +180,17 @@ SparkBot.prototype.registerWebHooks = function() {
     var extendedOptions = extend(optionsCloned, {
         path: "/v1/webhooks"
     });
+
+    var targetUrl = 'http://' + this.getBotDomain() +( isNaN(this.getPort()) ? '' : this.getPort() ) +'/' + callbackListener;
+
+    if(!this.hasPortInwebHook())
+    {
+        targetUrl = this.getBotDomain() +'/' + callbackListener;
+    }
+
     var messageData = {
         'name': 'GlobalListener',
-        'targetUrl': 'http://' + this.getBotDomain() +( isNaN(this.getPort()) ? '' : this.getPort() ) +'/' + callbackListener,
+        'targetUrl': targetUrl,
         'resource': 'messages',
         'event': 'all'
     }
