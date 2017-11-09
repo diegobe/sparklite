@@ -244,6 +244,21 @@ SparkBot.prototype.sendRichTextMessage = function(roomId, txt, callback) {
     })
 }
 
+SparkBot.prototype.sendRichTextMessageToDirectPerson = function(personEmail, txt, callback) {
+    var optionsCloned = clone(this.getOptions());
+    var extendedOptions = extend(optionsCloned, {
+        path: "/v1/messages/"
+    });
+    extendedOptions['method'] = 'POST';
+    var messageData = {
+        'toPersonEmail': personEmail,
+        'markdown': txt
+    }
+    SparkBot.sendRequestWithData(messageData, extendedOptions, function(result) {
+        callback(result);
+    })
+}
+
 SparkBot.prototype.sendMessageWithFile = function(roomId, txt, filesUrl, callback) {
     var optionsCloned = clone(this.getOptions());
     var extendedOptions = extend(optionsCloned, {
