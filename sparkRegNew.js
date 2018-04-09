@@ -23,7 +23,8 @@ const sendRequest = async (data, parentMethod) => {
     const response  = await rp(data);
     return response;
   } catch (e) {
-    console.log("[ "+ parentMethod +" ]: " +"Error sending the Request to Spark API: " + e)
+    console.log("[ "+ parentMethod +" ]: " +"Error sending the Request to Spark API: " + JSON.stringify(e))
+    throw e
   }
 };
 
@@ -52,7 +53,7 @@ class SparkBotApi {
     let options = Object.assign({},this.config);
     options.url = options.url + "/v1/webhooks"
     const callbackListener = 'v1/webhooklistener'
-    const targetUrl = 'http://' + options.botdomain + '/' + callbackListener;
+    const targetUrl = options.botdomain + '/' + callbackListener;
     const messageData = {
          'name': 'GlobalListener',
          'targetUrl':targetUrl,
@@ -177,7 +178,7 @@ class SparkBotApi {
             'text': txt
         }
         Object.assign(options,{body:messageData})
-        const result = await sendRequest(options, 'sendMessage');
+        const result = await sendRequest(options, 'sendMessageToDirectPerson');
         return result
   }
   async sendRichTextMessage(roomId, txt) {
@@ -188,7 +189,7 @@ class SparkBotApi {
           'markdown': txt
       }
       Object.assign(options,{body:messageData})
-      const result = await sendRequest(options, 'sendMessage');
+      const result = await sendRequest(options, 'sendRichTextMessage');
       return result;
   }
 
@@ -214,7 +215,7 @@ class SparkBotApi {
       }
     } catch(e) {
       console.log("error handling the post request: " + e)
-      return e
+      throw e
     }
   }
 
